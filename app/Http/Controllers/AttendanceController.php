@@ -13,14 +13,14 @@ class AttendanceController extends Controller
         $existingAttendance = Attendance::where('employee_id', Auth::id())
             ->whereDate('created_at', today())
             ->first();
-
+            
         if ($existingAttendance) {
             return redirect()->back()->with('error', 'Anda sudah check-in hari ini');
         }
 
         $attendance = Attendance::create([
             'employee_id' => Auth::id(),
-            'check_in' => Carbon::now('Asia/Jakarta'), 
+            'check_in' => Carbon::now('Asia/Jakarta'),
             'status' => 'present'
         ]);
    
@@ -32,7 +32,7 @@ class AttendanceController extends Controller
         $attendance = Attendance::where('employee_id', Auth::id())
             ->whereDate('created_at', today())
             ->first();
-
+            
         if (!$attendance) {
             return redirect()->back()->with('error', 'Anda belum check-in hari ini');
         }
@@ -42,7 +42,7 @@ class AttendanceController extends Controller
         }
 
         $attendance->update([
-            'check_out' => Carbon::now('Asia/Jakarta')
+            'check_out' => Carbon::now('Asia/Jakarta'),
         ]);
 
         return redirect()->back()->with('success', 'Check-out berhasil pada ' . $attendance->check_out->format('H:i:s'));
