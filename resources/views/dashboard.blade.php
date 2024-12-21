@@ -1,6 +1,14 @@
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 mb-4">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-800" id="clock"></h2>
+                    <p class="text-gray-600" id="date"></p>
+                </div>
+            </div>
+
             <!-- Notifikasi tetap sama -->
             
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
@@ -136,4 +144,48 @@
         preventDoubleSubmit(checkOutForm, checkOutBtn);
     });
     </script>
+     <!-- Script untuk jam digital -->
+     <script>
+    function updateClock() {
+        const now = new Date();
+        
+        // Format waktu
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        let seconds = now.getSeconds();
+        
+        // Tambahkan leading zero jika perlu
+        hours = hours < 10 ? '0' + hours : hours;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        
+        // Update jam
+        document.getElementById('clock').textContent = 
+            `${hours}:${minutes}:${seconds}`;
+        
+        // Array untuk nama hari dan bulan dalam Bahasa Indonesia
+        const hari = [
+            'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
+        ];
+        const bulan = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        
+        // Format tanggal
+        const tanggal = now.getDate();
+        const tahun = now.getFullYear();
+        
+        // Update tanggal
+        document.getElementById('date').textContent = 
+            `${hari[now.getDay()]}, ${tanggal} ${bulan[now.getMonth()]} ${tahun}`;
+    }
+
+    // Update setiap 1 detik
+    setInterval(updateClock, 1000);
+    
+    // Jalankan sekali saat halaman dimuat
+    updateClock();
+    </script>
+    
 </x-app-layout>
