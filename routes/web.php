@@ -47,10 +47,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/team-attendance', [ManagerController::class, 'teamAttendance'])->name('team.attendance');
     });
 
-    // Route untuk admin
-    Route::middleware(['role:admin'])->prefix('admin')->group(function () {
-        Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-        Route::resource('users', Admin\UserController::class);
-    });
+// Route untuk admin
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [Admin\DashboardController::class, 'index'])
+        ->name('admin.dashboard');
+});
+
+// Route untuk staff/user biasa
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        // Redirect admin ke dashboard admin
+        if(auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+        return view('dashboard');
+    })->name('dashboard');
+});
 });
 require __DIR__.'/auth.php';

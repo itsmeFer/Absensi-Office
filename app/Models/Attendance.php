@@ -30,4 +30,8 @@ class Attendance extends Model
     {
         return $value ? Carbon::parse($value)->setTimezone('Asia/Jakarta') : null;
     }
+    public function employee()
+    {
+        return $this->belongsTo(User::class, 'employee_id');
+    }
 }

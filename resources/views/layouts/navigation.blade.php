@@ -63,7 +63,19 @@
             </div>
         </div>
     </div>
-
+    <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+    <!-- ... -->
+    @if(auth()->user()->role === 'admin')
+        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+            {{ __('Dashboard') }}
+        </x-nav-link>
+    @else
+        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            {{ __('Dashboard') }}
+        </x-nav-link>
+    @endif
+    <!-- ... -->
+</nav>
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
