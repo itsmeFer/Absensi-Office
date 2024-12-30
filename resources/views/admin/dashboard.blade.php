@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-bold mb-4">Halaman Admin Dashboard</h2>
+            <h2 class="text-2xl font-bold mb-4">Halaman Admin </h2>
             
             <!-- Statistik -->
             <div class="grid grid-cols-3 gap-4 mb-6">
