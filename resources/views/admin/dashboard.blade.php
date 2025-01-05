@@ -6,7 +6,7 @@
             <!-- Statistik -->
             <div class="grid grid-cols-3 gap-4 mb-6">
                 <div class="bg-white rounded-lg shadow p-4">
-                    <h3 class="text-lg font-semibold mb-2">Total Karyawan</h3>
+                    <h3 class="text-lg font-semibold mb-2">Total keseluruhan Karyawan</h3>
                     <p class="text-3xl">{{ $users->count() }}</p>
                 </div>
                 <div class="bg-white rounded-lg shadow p-4">
