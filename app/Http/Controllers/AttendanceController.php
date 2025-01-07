@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+
 use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -8,36 +9,36 @@ use Carbon\Carbon;
 class AttendanceController extends Controller
 {
     public function checkIn(Request $request)
-{
-    // Cek apakah sudah pernah check-in hari ini
-    $existingAttendance = Attendance::where('employee_id', Auth::id())
-        ->whereDate('created_at', today())
-        ->first();
+    {
+        // Cek apakah sudah pernah check-in hari ini
+        $existingAttendance = Attendance::where('employee_id', Auth::id())
+            ->whereDate('created_at', today())
+            ->first();
         
-    if ($existingAttendance) {
-        return redirect()->back()->with('error', 'Anda sudah check-in hari ini');
+        if ($existingAttendance) {
+            return redirect()->back()->with('error', 'Anda sudah check-in hari ini');
+        }
+
+        // Set status based on time
+        $now = Carbon::now('Asia/Jakarta');
+        $status = $now->format('H:i:s') > '08:00:00' ? 'late' : 'present';
+
+        $attendance = Attendance::create([
+            'employee_id' => Auth::id(),
+            'check_in' => $now,
+            'status' => $status,
+            'check_in_location' => $request->location ?? null,
+        ]);
+
+        return redirect()->back()->with('success', 'Check-in berhasil pada ' . $attendance->check_in->format('H:i:s'));
     }
-
-    // Set status based on time
-    $now = Carbon::now('Asia/Jakarta');
-    $status = $now->format('H:i:s') > '08:00:00' ? 'late' : 'present';
-
-    $attendance = Attendance::create([
-        'employee_id' => Auth::id(),
-        'check_in' => $now,
-        'status' => $status,
-        'check_in_location' => $request->location ?? null,
-    ]);
-
-    return redirect()->back()->with('success', 'Check-in berhasil pada ' . $attendance->check_in->format('H:i:s'));
-}
 
     public function checkOut(Request $request)
     {
         $attendance = Attendance::where('employee_id', Auth::id())
             ->whereDate('created_at', today())
             ->first();
-            
+        
         if (!$attendance) {
             return redirect()->back()->with('error', 'Anda belum check-in hari ini');
         }
