@@ -5,10 +5,26 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ManagerController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\AdminController;  
+use App\Http\Controllers\Auth\LoginController;  // Pastikan untuk mengimpor LoginController jika perlu
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login'); // Arahkan ke halaman login
 });
+
+// Auth routes (pastikan login dan registrasi sudah ada)
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register']);
+});
+
+// Semua route yang membutuhkan autentikasi
+Route::middleware(['auth'])->group(function () {
+    // Route lainnya setelah login
+});
+
 
 // Group untuk semua route yang memerlukan authentication
 Route::middleware(['auth'])->group(function () {
@@ -40,6 +56,17 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     });
+    Route::get('/admin', [DashboardController::class, 'index'])->name('admin.dashboard');
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    
+    // Route untuk mengubah status absensi
+    Route::put('/attendance/{attendance}/update', [DashboardController::class, 'updateAttendanceStatus'])->name('admin.attendance.update');
+    
+    // Route untuk menghapus absensi
+    Route::delete('/attendance/{attendance}/delete', [DashboardController::class, 'deleteAttendance'])->name('admin.attendance.delete');
+});
+
 });
 
 require __DIR__.'/auth.php';
