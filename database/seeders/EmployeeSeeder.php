@@ -17,7 +17,7 @@ class EmployeeSeeder extends Seeder
     \App\Models\Employee::create([
         'name' => 'Ferdi',
         'email' => 'ferdi@gmail.com',
-        'password' => bcrypt('Armyofgod77'),
+        'password' => ('Armyofgod77'),
         'role' => 'staff',
         'join_date' => now(),
     ]);

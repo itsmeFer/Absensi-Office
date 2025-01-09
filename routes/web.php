@@ -67,6 +67,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::delete('/attendance/{attendance}/delete', [DashboardController::class, 'deleteAttendance'])->name('admin.attendance.delete');
 });
 
+Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.checkIn');
+Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut'])->name('attendance.checkOut');
+
+
+
+
 });
 
 require __DIR__.'/auth.php';

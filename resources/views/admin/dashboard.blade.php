@@ -5,9 +5,10 @@
             
             <!-- Statistik -->
             <div class="grid grid-cols-3 gap-4 mb-6">
+                <!-- Total Keseluruhan Karyawan -->
                 <div class="bg-white rounded-lg shadow p-4">
-                    <h3 class="text-lg font-semibold mb-2">Total keseluruhan Karyawan: </h3>
-                    <p class="text-3xl">{{ $totalUsers }}</p> <!-- Menampilkan total karyawan -->
+                    <h3 class="text-lg font-semibold mb-2">Total Keseluruhan Karyawan</h3>
+                    <p class="text-3xl">{{ $users->count() }}</p>
 
                     <!-- Tombol untuk Rincian Karyawan -->
                     <div x-data="{ open: false }" class="mt-4">
@@ -28,21 +29,22 @@
                     </div>
                 </div>
 
+                <!-- Hadir Hari Ini -->
                 <div class="bg-white rounded-lg shadow p-4">
                     <h3 class="text-lg font-semibold mb-2">Hadir Hari Ini</h3>
                     <p class="text-3xl">{{ $todayAttendance->count() }}</p>
                 </div>
 
+                <!-- Belum Hadir -->
                 <div class="bg-white rounded-lg shadow p-4">
                     <h3 class="text-lg font-semibold mb-2">Belum Hadir</h3>
                     <p class="text-3xl">
                         @php
                             $belumHadir = $users->count() - $todayAttendance->count();
-                            $belumHadir = $belumHadir < 0 ? 0 : $belumHadir;  // Menghindari angka negatif
                         @endphp
                         {{ $belumHadir }}
                     </p>
-                    
+
                     <!-- Tombol untuk Rincian Belum Hadir -->
                     <div x-data="{ open: false }" class="mt-4">
                         <button @click="open = ! open" class="text-blue-500 hover:text-blue-700 flex items-center">
@@ -73,7 +75,9 @@
                         <tr>
                             <th class="px-4 py-2 text-left">Nama</th>
                             <th class="px-4 py-2 text-left">Waktu Hadir</th>
-                            <th class="px-4 py-2 text-left">Waktu Keluar</th> 
+                            <th class="px-4 py-2 text-left">Waktu Keluar</th>
+                            <th class="px-4 py-2 text-left">Lokasi Hadir</th>
+                            <th class="px-4 py-2 text-left">Lokasi Keluar</th>
                             <th class="px-4 py-2 text-left">Status</th>
                             <th class="px-4 py-2 text-left">Aksi</th>
                         </tr>
@@ -89,7 +93,9 @@
                                     @else
                                         Belum Check-Out
                                     @endif
-                                </td> 
+                                </td>
+                                <td class="px-4 py-2">{{ $attendance->check_in_location ?? 'Lokasi tidak diketahui' }}</td>
+                                <td class="px-4 py-2">{{ $attendance->check_out_location ?? 'Lokasi tidak diketahui' }}</td>
                                 <td class="px-4 py-2">{{ $attendance->status }}</td>
                                 <td class="px-4 py-2">
                                     <form action="{{ route('admin.attendance.update', $attendance->id) }}" method="POST" class="inline">
@@ -108,7 +114,6 @@
                     </tbody>
                 </table>
             </div>
-
         </div>
     </div>
 </x-app-layout>

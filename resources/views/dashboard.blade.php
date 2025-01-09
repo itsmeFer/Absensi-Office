@@ -2,18 +2,16 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 mb-4">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 mb-4">
                 <div class="text-center">
                     <h2 class="text-2xl font-bold text-gray-800" id="clock"></h2>
                     <p class="text-gray-600" id="date"></p>
                 </div>
             </div>
 
-            <!-- Notifikasi tetap sama -->
-            
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-4">Absensi Hari Ini</h2>
-                
+
                 @php
                     $todayAttendance = Auth::user()->attendances()
                         ->whereDate('created_at', today())
@@ -21,41 +19,44 @@
                 @endphp
 
                 <div class="grid grid-cols-2 gap-4">
-                {{-- Check In --}}
-@if(!$todayAttendance)
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-        <h3 class="text-lg font-medium text-blue-800 mb-3">Check In</h3>
-        <form method="POST" action="{{ route('check-in') }}" id="checkInForm">
-            @csrf
-            <button 
-                type="button" 
-                id="checkInBtn"
-                onclick="confirmCheckIn()"
-                class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-            >
-                Absen Masuk
-            </button>
-        </form>
-    </div>
-@endif
+                    {{-- Check In --}}
+                    @if(!$todayAttendance)
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                            <h3 class="text-lg font-medium text-blue-800 mb-3">Check In</h3>
+                            <form method="POST" action="{{ route('check-in') }}" id="checkInForm">
+                                @csrf
+                                <input type="hidden" name="check_in_location" id="check_in_location">
+                                <button 
+                                    type="button" 
+                                    id="checkInBtn"
+                                    onclick="confirmCheckIn()"
+                                    class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                                >
+                                    Absen Masuk
+                                </button>
+                            </form>
+                        </div>
+                    @endif
 
-{{-- Check Out --}}
-@if($todayAttendance && !$todayAttendance->check_out)
-    <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-        <h3 class="text-lg font-medium text-red-800 mb-3">Check Out</h3>
-        <form method="POST" action="{{ route('check-out') }}" id="checkOutForm">
-            @csrf
-            <button 
-                type="button" 
-                id="checkOutBtn"
-                onclick="confirmCheckOut()"
-                class="w-full bg-red-500 text-white font-bold py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-            >
-                Absen Pulang
-            </button>
-        </form>
-    </div>
-@endif
+                    {{-- Check Out --}}
+                    @if($todayAttendance && !$todayAttendance->check_out)
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                            <h3 class="text-lg font-medium text-red-800 mb-3">Check Out</h3>
+                            <form method="POST" action="{{ route('check-out') }}" id="checkOutForm">
+                                @csrf
+                                <input type="hidden" name="check_out_location" id="check_out_location">
+                                <button 
+                                    type="button" 
+                                    id="checkOutBtn"
+                                    onclick="confirmCheckOut()"
+                                    class="w-full bg-red-500 text-white font-bold py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                                >
+                                    Absen Pulang
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+                </div>
 
                 {{-- Informasi Terakhir Absen --}}
                 <div class="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
@@ -64,17 +65,17 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <strong>Check In:</strong> 
-                                {{ $todayAttendance->check_in ? 
-                                    $todayAttendance->check_in->translatedFormat('l, d F Y - H:i:s') : 
-                                    'Belum Check In' 
-                                }}
+                                {{ $todayAttendance->check_in ? $todayAttendance->check_in->translatedFormat('l, d F Y - H:i:s') : 'Belum Check In' }}
+                                <br>
+                                <strong>Lokasi Check In:</strong> 
+                                {{ $todayAttendance->check_in_location ?? 'Tidak Tercatat' }}
                             </div>
                             <div>
                                 <strong>Check Out:</strong> 
-                                {{ $todayAttendance->check_out ? 
-                                    $todayAttendance->check_out->translatedFormat('l, d F Y - H:i:s') : 
-                                    'Belum Check Out' 
-                                }}
+                                {{ $todayAttendance->check_out ? $todayAttendance->check_out->translatedFormat('l, d F Y - H:i:s') : 'Belum Check Out' }}
+                                <br>
+                                <strong>Lokasi Check Out:</strong> 
+                                {{ $todayAttendance->check_out_location ?? 'Tidak Tercatat' }}
                             </div>
                         </div>
                     @else
@@ -90,102 +91,68 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-    function confirmCheckIn() {
-        Swal.fire({
-            title: 'Konfirmasi Check In',
-            text: 'Apakah Anda yakin ingin melakukan check in sekarang?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, Check In!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('checkInForm').submit();
-            }
+ function confirmCheckIn() {
+        navigator.geolocation.getCurrentPosition((position) => {
+            document.getElementById('check_in_location').value = 
+                `${position.coords.latitude}, ${position.coords.longitude}`;
+            
+            Swal.fire({
+                title: 'Konfirmasi Check In',
+                text: 'Apakah Anda yakin ingin melakukan check in sekarang?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Check In!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('checkInForm').submit();
+                }
+            });
+        }, (error) => {
+            Swal.fire('Geolokasi gagal', 'Tidak dapat mengambil lokasi Anda.', 'error');
         });
     }
 
     function confirmCheckOut() {
-        Swal.fire({
-            title: 'Konfirmasi Check Out',
-            text: 'Apakah Anda yakin ingin melakukan check out sekarang?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, Check Out!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('checkOutForm').submit();
-            }
+        navigator.geolocation.getCurrentPosition((position) => {
+            document.getElementById('check_out_location').value = 
+                `${position.coords.latitude}, ${position.coords.longitude}`;
+            
+            Swal.fire({
+                title: 'Konfirmasi Check Out',
+                text: 'Apakah Anda yakin ingin melakukan check out sekarang?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Check Out!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('checkOutForm').submit();
+                }
+            });
+        }, (error) => {
+            Swal.fire('Geolokasi gagal', 'Tidak dapat mengambil lokasi Anda.', 'error');
         });
     }
 
-    // Script pencegah double submit tetap sama
-    document.addEventListener('DOMContentLoaded', function() {
-        const checkInBtn = document.getElementById('checkInBtn');
-        const checkOutBtn = document.getElementById('checkOutBtn');
-        const checkInForm = document.getElementById('checkInForm');
-        const checkOutForm = document.getElementById('checkOutForm');
+        document.addEventListener('DOMContentLoaded', function() {
+            setInterval(updateClock, 1000);
+            updateClock();
+        });
 
-        function preventDoubleSubmit(form, button) {
-            if (form && button) {
-                form.addEventListener('submit', function() {
-                    button.disabled = true;
-                    button.innerHTML = 'Sedang diproses...';
-                });
-            }
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').textContent = now.toLocaleTimeString();
+            document.getElementById('date').textContent = now.toLocaleDateString('id-ID', {
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric'
+            });
         }
-
-        preventDoubleSubmit(checkInForm, checkInBtn);
-        preventDoubleSubmit(checkOutForm, checkOutBtn);
-    });
     </script>
-     <!-- Script untuk jam digital -->
-     <script>
-    function updateClock() {
-        const now = new Date();
-        
-        // Format waktu
-        let hours = now.getHours();
-        let minutes = now.getMinutes();
-        let seconds = now.getSeconds();
-        
-        // Tambahkan leading zero jika perlu
-        hours = hours < 10 ? '0' + hours : hours;
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        seconds = seconds < 10 ? '0' + seconds : seconds;
-        
-        // Update jam
-        document.getElementById('clock').textContent = 
-            `${hours}:${minutes}:${seconds}`;
-        
-        // Array untuk nama hari dan bulan dalam Bahasa Indonesia
-        const hari = [
-            'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
-        ];
-        const bulan = [
-            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-        ];
-        
-        // Format tanggal
-        const tanggal = now.getDate();
-        const tahun = now.getFullYear();
-        
-        // Update tanggal
-        document.getElementById('date').textContent = 
-            `${hari[now.getDay()]}, ${tanggal} ${bulan[now.getMonth()]} ${tahun}`;
-    }
-
-    // Update setiap 1 detik
-    setInterval(updateClock, 1000);
-    
-    // Jalankan sekali saat halaman dimuat
-    updateClock();
-    </script>
-    
 </x-app-layout>
