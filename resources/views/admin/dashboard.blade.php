@@ -30,9 +30,14 @@
                 </div>
 
                 <!-- Hadir Hari Ini -->
+
+
                 <div class="bg-white rounded-lg shadow p-4">
                     <h3 class="text-lg font-semibold mb-2">Hadir Hari Ini</h3>
                     <p class="text-3xl">{{ $todayAttendance->count() }}</p>
+                    
+                    <a href="{{ route('admin.attendance.previous') }}" class="btn btn-primary mt-4">Lihat Presensi Sebelumnya </a>
+
                 </div>
 
                 <!-- Belum Hadir -->
@@ -66,7 +71,7 @@
                     </div>
                 </div>
             </div>
-
+                
             <!-- Daftar Karyawan yang Hadir Hari Ini -->
             <div class="bg-white rounded-lg shadow p-4">
                 <h3 class="text-lg font-semibold mb-2">Karyawan yang Hadir Hari Ini</h3>
@@ -114,6 +119,8 @@
                     </tbody>
                 </table>
             </div>
+
+            
         </div>
     </div>
 </x-app-layout>

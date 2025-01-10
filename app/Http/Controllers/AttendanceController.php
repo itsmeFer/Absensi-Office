@@ -8,6 +8,15 @@ use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
+
+    public function showPreviousAttendance()
+    {
+        $yesterday = Carbon::yesterday()->toDateString();
+
+        $attendances = Attendance::whereDate('created_at', $yesterday)->get();
+
+        return view('admin.attendance.previous', compact('attendances', 'yesterday'));
+    }
     public function checkIn(Request $request)
     {
         // Cek apakah sudah pernah check-in hari ini

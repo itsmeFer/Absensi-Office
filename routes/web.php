@@ -70,6 +70,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.checkIn');
 Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut'])->name('attendance.checkOut');
 
+Route::get('/admin/attendance/previous', [AttendanceController::class, 'showPreviousAttendance'])
+    ->name('admin.attendance.previous');
+
 
 
 
