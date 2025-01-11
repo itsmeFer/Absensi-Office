@@ -34,7 +34,7 @@
                 </table>
             @endif
 
-            <a href="{{ route('dashboard') }}" class="btn btn-secondary mt-4">Kembali ke Dashboard</a>
+            <a href="{{ route('dashboard') }}" class="btn btn-secondary mt-4">Kembali ke Halaman Dashboard</a>
         </div>
     </div>
 </x-app-layout>
