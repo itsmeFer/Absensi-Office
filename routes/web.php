@@ -74,6 +74,9 @@ Route::get('/admin/attendance/previous', [AttendanceController::class, 'showPrev
     ->name('admin.attendance.previous');
 
 
+    Route::post('/check-in', [AttendanceController::class, 'checkIn'])->name('check-in');
+    Route::post('/check-out', [AttendanceController::class, 'checkOut'])->name('check-out');
+    
 
 
 });

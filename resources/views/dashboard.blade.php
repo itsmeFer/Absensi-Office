@@ -23,14 +23,16 @@
                     @if(!$todayAttendance)
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
                             <h3 class="text-lg font-medium text-blue-800 mb-3">Check In</h3>
-                            <form method="POST" action="{{ route('check-in') }}" id="checkInForm">
+                            <form method="POST" action="{{ route('check-in') }}" id="checkInForm" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="check_in_location" id="check_in_location">
+                                <label for="check_in_photo" class="block mb-2 text-sm font-medium text-gray-600">Unggah Foto:</label>
+                                <input type="file" name="check_in_photo" id="check_in_photo" accept="image/*" class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none focus:ring focus:border-blue-500">
                                 <button 
                                     type="button" 
                                     id="checkInBtn"
                                     onclick="confirmCheckIn()"
-                                    class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                                    class="w-full mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
                                 >
                                     Absen Masuk
                                 </button>
@@ -69,6 +71,13 @@
                                 <br>
                                 <strong>Lokasi Check In:</strong> 
                                 {{ $todayAttendance->check_in_location ?? 'Tidak Tercatat' }}
+                                <br>
+                                <strong>Foto Check In:</strong>
+                                @if($todayAttendance->check_in_photo)
+                                    <img src="{{ asset('storage/' . $todayAttendance->check_in_photo) }}" alt="Check-In Photo" class="mt-2 rounded w-32 h-32 object-cover">
+                                @else
+                                    Tidak ada foto
+                                @endif
                             </div>
                             <div>
                                 <strong>Check Out:</strong> 
@@ -91,7 +100,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
- function confirmCheckIn() {
+    function confirmCheckIn() {
         navigator.geolocation.getCurrentPosition((position) => {
             document.getElementById('check_in_location').value = 
                 `${position.coords.latitude}, ${position.coords.longitude}`;
@@ -115,44 +124,20 @@
         });
     }
 
-    function confirmCheckOut() {
-        navigator.geolocation.getCurrentPosition((position) => {
-            document.getElementById('check_out_location').value = 
-                `${position.coords.latitude}, ${position.coords.longitude}`;
-            
-            Swal.fire({
-                title: 'Konfirmasi Check Out',
-                text: 'Apakah Anda yakin ingin melakukan check out sekarang?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Check Out!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('checkOutForm').submit();
-                }
-            });
-        }, (error) => {
-            Swal.fire('Geolokasi gagal', 'Tidak dapat mengambil lokasi Anda.', 'error');
+    document.addEventListener('DOMContentLoaded', function() {
+        setInterval(updateClock, 1000);
+        updateClock();
+    });
+
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').textContent = now.toLocaleTimeString();
+        document.getElementById('date').textContent = now.toLocaleDateString('id-ID', {
+            weekday: 'long', 
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric'
         });
     }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            setInterval(updateClock, 1000);
-            updateClock();
-        });
-
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').textContent = now.toLocaleTimeString();
-            document.getElementById('date').textContent = now.toLocaleDateString('id-ID', {
-                weekday: 'long', 
-                day: 'numeric', 
-                month: 'long', 
-                year: 'numeric'
-            });
-        }
     </script>
 </x-app-layout>
