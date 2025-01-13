@@ -84,7 +84,10 @@
                             <th class="px-4 py-2 text-left">Lokasi Hadir</th>
                             <th class="px-4 py-2 text-left">Lokasi Keluar</th>
                             <th class="px-4 py-2 text-left">Status</th>
+                            <th class="px-4 py-2 text-left">Foto Check In</th>
                             <th class="px-4 py-2 text-left">Aksi</th>
+                            
+
                         </tr>
                     </thead>
                     <tbody>
@@ -103,6 +106,13 @@
                                 <td class="px-4 py-2">{{ $attendance->check_out_location ?? 'Lokasi tidak diketahui' }}</td>
                                 <td class="px-4 py-2">{{ $attendance->status }}</td>
                                 <td class="px-4 py-2">
+                                    @if ($attendance->check_in_photo)
+                                        <img src="{{ asset('storage/' . $attendance->check_in_photo) }}" alt="Foto Check In" class="w-16 h-16 object-cover rounded-full">
+                                    @else
+                                        Tidak Ada Foto
+                                    @endif
+                                </td>
+                                <td class="px-4 py-2">
                                     <form action="{{ route('admin.attendance.update', $attendance->id) }}" method="POST" class="inline">
                                         @csrf
                                         @method('PUT')
@@ -114,6 +124,8 @@
                                         <button type="submit" class="text-red-600 hover:text-red-800">Hapus</button>
                                     </form>
                                 </td>
+                                
+
                             </tr>
                         @endforeach
                     </tbody>

@@ -4,15 +4,14 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\AdminController;  
-use App\Http\Controllers\Auth\LoginController;  // Pastikan untuk mengimpor LoginController jika perlu
 
 Route::get('/', function () {
-    return redirect()->route('login'); // Arahkan ke halaman login
+    return redirect()->route('login'); // Redirect to login page
 });
 
-// Auth routes (pastikan login dan registrasi sudah ada)
+// Auth routes (guest-only)
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
@@ -20,26 +19,21 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/register', [RegisterController::class, 'register']);
 });
 
-// Semua route yang membutuhkan autentikasi
+// Protected routes (auth-only)
 Route::middleware(['auth'])->group(function () {
-    // Route lainnya setelah login
-});
-
-
-// Group untuk semua route yang memerlukan authentication
-Route::middleware(['auth'])->group(function () {
-    // Route dashboard dengan redirect berdasarkan role
+    // Dashboard route
     Route::get('/dashboard', function () {
-        if(auth()->user()->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        }
-        return view('dashboard');
+        return auth()->user()->role === 'admin'
+            ? redirect()->route('admin.dashboard')
+            : view('dashboard');
     })->name('dashboard');
 
     // Profile routes
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
 
     // Staff routes
     Route::middleware(['role:staff'])->group(function () {
@@ -53,32 +47,16 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Admin routes
-    Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::middleware(['role:admin'])->prefix('admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+        // Attendance management
+        Route::prefix('attendance')->group(function () {
+            Route::put('/{attendance}/update', [DashboardController::class, 'updateAttendanceStatus'])->name('admin.attendance.update');
+            Route::delete('/{attendance}/delete', [DashboardController::class, 'deleteAttendance'])->name('admin.attendance.delete');
+            Route::get('/previous', [AttendanceController::class, 'showPreviousAttendance'])->name('admin.attendance.previous');
+        });
     });
-    Route::get('/admin', [DashboardController::class, 'index'])->name('admin.dashboard');
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-    
-    // Route untuk mengubah status absensi
-    Route::put('/attendance/{attendance}/update', [DashboardController::class, 'updateAttendanceStatus'])->name('admin.attendance.update');
-    
-    // Route untuk menghapus absensi
-    Route::delete('/attendance/{attendance}/delete', [DashboardController::class, 'deleteAttendance'])->name('admin.attendance.delete');
 });
 
-Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.checkIn');
-Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut'])->name('attendance.checkOut');
-
-Route::get('/admin/attendance/previous', [AttendanceController::class, 'showPreviousAttendance'])
-    ->name('admin.attendance.previous');
-
-
-    Route::post('/check-in', [AttendanceController::class, 'checkIn'])->name('check-in');
-    Route::post('/check-out', [AttendanceController::class, 'checkOut'])->name('check-out');
-    
-
-
-});
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

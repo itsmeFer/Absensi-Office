@@ -1,7 +1,6 @@
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 mb-4">
                 <div class="text-center">
                     <h2 class="text-2xl font-bold text-gray-800" id="clock"></h2>
@@ -26,13 +25,23 @@
                             <form method="POST" action="{{ route('check-in') }}" id="checkInForm" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="check_in_location" id="check_in_location">
-                                <label for="check_in_photo" class="block mb-2 text-sm font-medium text-gray-600">Unggah Foto:</label>
-                                <input type="file" name="check_in_photo" id="check_in_photo" accept="image/*" class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none focus:ring focus:border-blue-500">
+
+                                <div class="mb-4">
+                                    <label for="check_in_photo" class="block text-gray-700">Foto Check In</label>
+                                    <input 
+                                        type="file" 
+                                        name="check_in_photo" 
+                                        id="check_in_photo" 
+                                        class="w-full p-2 border border-gray-300 rounded-md mt-2" 
+                                        required
+                                    >
+                                </div>
+
                                 <button 
                                     type="button" 
                                     id="checkInBtn"
                                     onclick="confirmCheckIn()"
-                                    class="w-full mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                                    class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
                                 >
                                     Absen Masuk
                                 </button>
@@ -71,13 +80,6 @@
                                 <br>
                                 <strong>Lokasi Check In:</strong> 
                                 {{ $todayAttendance->check_in_location ?? 'Tidak Tercatat' }}
-                                <br>
-                                <strong>Foto Check In:</strong>
-                                @if($todayAttendance->check_in_photo)
-                                    <img src="{{ asset('storage/' . $todayAttendance->check_in_photo) }}" alt="Check-In Photo" class="mt-2 rounded w-32 h-32 object-cover">
-                                @else
-                                    Tidak ada foto
-                                @endif
                             </div>
                             <div>
                                 <strong>Check Out:</strong> 
@@ -100,44 +102,76 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-    function confirmCheckIn() {
-        navigator.geolocation.getCurrentPosition((position) => {
-            document.getElementById('check_in_location').value = 
-                `${position.coords.latitude}, ${position.coords.longitude}`;
-            
-            Swal.fire({
-                title: 'Konfirmasi Check In',
-                text: 'Apakah Anda yakin ingin melakukan check in sekarang?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Check In!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('checkInForm').submit();
-                }
+        function confirmCheckIn() {
+            // Cek apakah foto sudah diunggah
+            const fileInput = document.getElementById('check_in_photo');
+            if (!fileInput.files.length) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Foto Check In wajib diunggah!',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition((position) => {
+                document.getElementById('check_in_location').value = 
+                    `${position.coords.latitude}, ${position.coords.longitude}`;
+                
+                Swal.fire({
+                    title: 'Konfirmasi Check In',
+                    text: 'Apakah Anda yakin ingin melakukan check in sekarang?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Check In!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('checkInForm').submit();
+                    }
+                });
             });
-        }, (error) => {
-            Swal.fire('Geolokasi gagal', 'Tidak dapat mengambil lokasi Anda.', 'error');
-        });
-    }
+        }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        setInterval(updateClock, 1000);
-        updateClock();
-    });
+        function confirmCheckOut() {
+            navigator.geolocation.getCurrentPosition((position) => {
+                document.getElementById('check_out_location').value = 
+                    `${position.coords.latitude}, ${position.coords.longitude}`;
+                
+                Swal.fire({
+                    title: 'Konfirmasi Check Out',
+                    text: 'Apakah Anda yakin ingin melakukan check out sekarang?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Check Out!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('checkOutForm').submit();
+                    }
+                });
+            });
+        }
 
-    function updateClock() {
-        const now = new Date();
-        document.getElementById('clock').textContent = now.toLocaleTimeString();
-        document.getElementById('date').textContent = now.toLocaleDateString('id-ID', {
-            weekday: 'long', 
-            day: 'numeric', 
-            month: 'long', 
-            year: 'numeric'
+        document.addEventListener('DOMContentLoaded', function() {
+            setInterval(updateClock, 1000);
+            updateClock();
         });
-    }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').textContent = now.toLocaleTimeString();
+            document.getElementById('date').textContent = now.toLocaleDateString('id-ID', {
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric'
+            });
+        }
     </script>
 </x-app-layout>
