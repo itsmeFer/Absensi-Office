@@ -74,7 +74,7 @@
                 
             <!-- Daftar Karyawan yang Hadir Hari Ini -->
             <div class="bg-white rounded-lg shadow p-4">
-                <h3 class="text-lg font-semibold mb-2">Karyawan yang Hadir Hari Ini</h3>
+                <h3 class="text-lg font-semibold mb-2">Daftar Karyawan yang Hadir Hari Ini</h3>
                 <table class="min-w-full table-auto">
                     <thead>
                         <tr>
