@@ -57,6 +57,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/previous', [AttendanceController::class, 'showPreviousAttendance'])->name('admin.attendance.previous');
         });
     });
+
+    
 });
 
 require __DIR__ . '/auth.php';
