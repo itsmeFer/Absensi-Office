@@ -43,7 +43,7 @@
                                     onclick="confirmCheckIn()"
                                     class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
                                 >
-                                    Absen Masuk
+                                    Absensi Masuk
                                 </button>
                             </form>
                         </div>
