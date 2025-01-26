@@ -90,7 +90,7 @@
                             </div>
                         </div>
                     @else
-                        <p class="text-gray-600">Anda Belum melakukan absensi hari ini</p>
+                        <p class="text-gray-600">Anda Belum melakukan absensi hari ini!</p>
                     @endif
                 </div>
             </div>
