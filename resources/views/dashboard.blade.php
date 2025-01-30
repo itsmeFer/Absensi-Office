@@ -9,7 +9,7 @@
             </div>
 
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Absensi Hari Ini</h2>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Absensi Hari Ini:</h2>
 
                 @php
                     $todayAttendance = Auth::user()->attendances()
